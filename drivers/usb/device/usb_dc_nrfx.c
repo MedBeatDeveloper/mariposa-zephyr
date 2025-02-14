@@ -1283,7 +1283,8 @@ int usb_dc_attach(void)
 	err = nrfx_usbd_init(usbd_event_handler);
 
 	if (err != NRFX_SUCCESS) {
-		LOG_DBG("nRF USBD driver init failed. Code: %d", (uint32_t)err);
+		printk("nRF USBD driver init failed. Code: %d", (uint32_t)err);
+		printk("att:0");
 		return -EIO;
 	}
 	nrfx_power_usbevt_enable();
@@ -1539,11 +1540,13 @@ int usb_dc_ep_enable(const uint8_t ep)
 	struct nrf_usbd_ep_ctx *ep_ctx;
 
 	if (!dev_attached()) {
+	    printk("ep:0");
 		return -ENODEV;
 	}
 
 	ep_ctx = endpoint_ctx(ep);
 	if (!ep_ctx) {
+	    printk("ep:1");
 		return -EINVAL;
 	}
 
@@ -1557,9 +1560,17 @@ int usb_dc_ep_enable(const uint8_t ep)
 		 */
 		nrfx_usbd_ep_stall_clear(ep_addr_to_nrfx(ep));
 	}
+
+/*	
+    // A crutch by ES
+    // Temporarly fixed as this !!!
+    // #TODO check with different PCs in differentsituations
+    // Think how to organize the code
+
 	if (ep_ctx->cfg.en) {
 		return -EALREADY;
 	}
+*/
 
 	LOG_DBG("EP enable: 0x%02x", ep);
 
